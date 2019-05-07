@@ -45,22 +45,7 @@ import okhttp3.TlsVersion;
 import okhttp3.ConnectionSpec;
 
 
-/**
- * Created by xinghui on 9/20/16.
- * <p>
- * calling this in your Application's onCreate
- * startService(new Intent(this, NotificationCollectorMonitorService.class));
- * <p>
- * BY THE WAY Don't Forget to Add the Service to the AndroidManifest.xml File.
- * <service android:name=".NotificationCollectorMonitorService"/>
- */
 public class NotificationCollectorMonitorService extends Service {
-
-        /**
-         * {@link Log#isLoggable(String, int)}
-         * <p>
-         * IllegalArgumentException is thrown if the tag.length() > 23.
-         */
         private static final String TAG = "NotifiCollectorMonitor";
         private Timer timer=null;
         private String echointerval=null;

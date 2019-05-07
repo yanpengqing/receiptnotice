@@ -29,6 +29,10 @@ public class NLService extends NotificationListenerService implements AsyncRespo
                         return posturl;
         }
 
+        @Override
+        public int onStartCommand(Intent intent, int flags, int startId) {
+                return START_STICKY;
+        }
 
         @Override
         public void onNotificationPosted(StatusBarNotification sbn) {
