@@ -16,11 +16,11 @@ public class CashbarNotificationHandle extends NotificationHandle{
                 if(title.contains("收钱吧")){
                         if(content.contains("成功收款") | content.contains("向你付款")){
                                 Map<String,String> postmap=new HashMap<String,String>();
-                                postmap.put("type",getCashbarType(content));
-                                postmap.put("time",notitime);
-                                postmap.put("title",title);
+//                                postmap.put("type",getCashbarType(content));
+                                postmap.put("time",when+"");
+//                                postmap.put("title",title);
                                 postmap.put("money",extractMoney(content));
-                                postmap.put("content",content);
+//                                postmap.put("content",content);
 
                                 postpush.doPost(postmap);
                                 return ;
@@ -48,7 +48,7 @@ public class CashbarNotificationHandle extends NotificationHandle{
                 if(chinesetype.equals("微信"))
                         return "wechat";
                 if(chinesetype.equals("支付宝"))
-                        return "alipa";
+                        return "alipay";
                 else return chinesetype;
         }
 

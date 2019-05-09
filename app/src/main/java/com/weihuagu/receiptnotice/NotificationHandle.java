@@ -17,6 +17,8 @@ public abstract class NotificationHandle{
         protected String content;
         protected String notitime;
         protected IDoPost postpush;
+        protected long when;
+
         public NotificationHandle(String pkgtype,Notification notification,IDoPost postpush){
                 this.pkgtype=pkgtype;
                 this.notification=notification;
@@ -27,7 +29,7 @@ public abstract class NotificationHandle{
                 title = extras.getString(Notification.EXTRA_TITLE, "");
                 // 获取通知内容
                 content = extras.getString(Notification.EXTRA_TEXT, "");
-                long when=notification.when;
+                when = notification.when;
                 Date date=new Date(when);
                 SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 notitime=format.format(date);

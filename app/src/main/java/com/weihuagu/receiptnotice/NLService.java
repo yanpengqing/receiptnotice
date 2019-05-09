@@ -1,17 +1,16 @@
 package com.weihuagu.receiptnotice;
-import android.content.Intent;
-import android.service.notification.NotificationListenerService;
+
 import android.app.Notification;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
+import android.os.Bundle;
+import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
 import android.util.Log;
-import android.os.Bundle;
-import android.content.SharedPreferences;
-import android.content.Context;
-import android.os.Build;
 
-import java.util.HashMap;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -22,7 +21,7 @@ public class NLService extends NotificationListenerService implements AsyncRespo
         private Context context=null;
         private String getPostUrl(){
                 SharedPreferences sp=getSharedPreferences("url", 0);
-                this.posturl =sp.getString("posturl", "");
+                this.posturl =sp.getString("posturl", null);
                 if (posturl==null)
                         return null;
                 else
@@ -39,6 +38,7 @@ public class NLService extends NotificationListenerService implements AsyncRespo
                 //        super.onNotificationPosted(sbn);
                 //这里只是获取了包名和通知提示信息，其他数据可根据需求取，注意空指针就行
                 Log.d(TAG,"接受到通知消息");
+                Log.d(TAG,"posturl:"+getPostUrl());
                 if(getPostUrl()==null)
                         return;
 
@@ -152,10 +152,11 @@ public class NLService extends NotificationListenerService implements AsyncRespo
                 PostTask mtask = new PostTask();
                 mtask.setRandomTaskNum(tasknum);
                 mtask.setOnAsyncResponse(this);
-                tmpmap.put("encrypt","0");
-                tmpmap.put("url",this.posturl);
+//                tmpmap.put("encrypt","0");
+                tmpmap.put("url",this.posturl+Constants.URL_CALLBACK);
+                tmpmap.put("token",new PreferenceUtil(this).getToken());
                 String deviceid=preference.getDeviceid();
-                tmpmap.put("deviceid",(!deviceid.equals("")? deviceid:DeviceInfoUtil.getUniquePsuedoID()));
+//                tmpmap.put("deviceid",(!deviceid.equals("")? deviceid:DeviceInfoUtil.getUniquePsuedoID()));
 
                 if(preference.isEncrypt()){
                         String encrypt_type=preference.getEncryptMethod();
@@ -173,9 +174,9 @@ public class NLService extends NotificationListenerService implements AsyncRespo
                         }
                 }
 
-                Map<String, String> recordmap=tmpmap;
-                recordmap.remove("encrypt");
-                LogUtil.postRecordLog(tasknum,recordmap.toString());
+//                Map<String, String> recordmap=tmpmap;
+//                recordmap.remove("encrypt");
+                LogUtil.postRecordLog(tasknum,tmpmap.toString());
 
 
                 if(postmap!=null)

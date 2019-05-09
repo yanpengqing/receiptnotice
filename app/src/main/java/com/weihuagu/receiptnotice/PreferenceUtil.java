@@ -13,6 +13,12 @@ public class PreferenceUtil{
                 sharedPref=PreferenceManager.getDefaultSharedPreferences(this.context);
 
         }
+        public void setToken(String value){
+               sharedPref.edit().putString("token",value).commit();
+        }
+        public String getToken(){
+                return this.sharedPref.getString("token","");
+        }
         public String getDeviceid(){
                 return this.sharedPref.getString("deviceid","");
         }

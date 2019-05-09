@@ -18,9 +18,9 @@ public class MainApplication extends Application {
 
     private void initLogConfig() {
         TLogApplication.initialize(this);
-        IConfig.getInstance().isShowLog(false)//是否在logcat中打印log,默认不打印
-                .isWriteLog(true)//是否在文件中记录，默认不记录
-                .tag("GoFileService");//logcat 日志过滤tag
+        IConfig.getInstance().isShowLog(true)//是否在logcat中打印log,默认不打印
+                .isWriteLog(false)//是否在文件中记录，默认不记录
+                .tag("NLService");//logcat 日志过滤tag
     }
 
     private void startNotificationService() {
