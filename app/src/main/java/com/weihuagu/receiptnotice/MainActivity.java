@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.NotificationManagerCompat;
@@ -20,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.github.pedrovgs.lynx.LynxActivity;
@@ -36,12 +38,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "MainActivity";
     private Toolbar myToolbar;
     private Button btnsetposturl;
+    private RelativeLayout mRlFloat;
     private FloatingActionButton btnshowlog;
     private EditText posturl;
     private SharedPreferences sp;
     private EditText mEdtToken;
     private Button btnSubmit;
     public  Boolean mIsRunning = false;
+    final static int COUNTS = 5;//点击次数
+    final static long DURATION = 2 * 1000;//规定有效时间
+    long[] mHits = new long[COUNTS];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initView() {
         sp = getSharedPreferences("url", Context.MODE_PRIVATE);
         myToolbar = findViewById(R.id.my_toolbar);
+        mRlFloat = findViewById(R.id.rl_floatingshowlog);
+        mRlFloat.setOnClickListener(this);
         btnSubmit = findViewById(R.id.btn_submit);
         btnSubmit.setOnClickListener(this);
         setSupportActionBar(myToolbar);
@@ -148,6 +156,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 //        addStatusBar();
 
+                break;
+            case R.id.rl_floatingshowlog:
+                exitAfterMany();
                 break;
             case R.id.btnsetposturl:
                 posturl.setHint(null);
@@ -249,4 +260,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onDataReceivedFailed(String[] returnstr) {
         LogUtil.postResultLog(returnstr[0],returnstr[1],returnstr[2]);
     }
+    /**
+     * 连续点击多次退出
+     */
+    private void exitAfterMany() {
+        /**
+         * 实现双击方法
+         * src 拷贝的源数组
+         * srcPos 从源数组的那个位置开始拷贝.
+         * dst 目标数组
+         * dstPos 从目标数组的那个位子开始写数据
+         * length 拷贝的元素的个数
+         */
+        System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);
+        //实现左移，然后最后一个位置更新距离开机的时间，如果最后一个时间和最开始时间小于DURATION，即连续5次点击
+        mHits[mHits.length - 1] = SystemClock.uptimeMillis();//System.currentTimeMillis()
+        if ((mHits[mHits.length - 1] - mHits[0] <= DURATION)) {
+            btnshowlog.setVisibility(View.VISIBLE);
+        }
+    }
+
 }

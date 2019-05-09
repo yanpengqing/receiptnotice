@@ -83,14 +83,24 @@
             android:textColor="#fff" />
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingshowlog"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <RelativeLayout
+        android:clickable="true"
+        android:id="@+id/rl_floatingshowlog"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:src="@drawable/log_icon"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent" >
+        <android.support.design.widget.FloatingActionButton
+            android:visibility="gone"
+           android:layout_centerInParent="true"
+            android:id="@+id/floatingshowlog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:src="@drawable/log_icon"
+           />
+
+    </RelativeLayout>
 
 
 </android.support.constraint.ConstraintLayout>
