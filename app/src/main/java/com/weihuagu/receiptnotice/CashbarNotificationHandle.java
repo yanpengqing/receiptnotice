@@ -18,7 +18,7 @@ public class CashbarNotificationHandle extends NotificationHandle{
                                 Map<String,String> postmap=new HashMap<String,String>();
                                 postmap.put("type",getCashbarType(content));
                                 postmap.put("time",notitime);
-                                postmap.put("title","支付宝支付");
+                                postmap.put("title",title);
                                 postmap.put("money",extractMoney(content));
                                 postmap.put("content",content);
 

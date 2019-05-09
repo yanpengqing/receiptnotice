@@ -84,6 +84,10 @@ public class NLService extends NotificationListenerService implements AsyncRespo
                 if("com.wosai.cashbar".equals(pkg)){
                         new CashbarNotificationHandle("com.wosai.cashbar",notification,this).handleNotification();
                 }
+                //云闪付
+                if("com.unionpay".equals(pkg)){
+                        new UnionpayNotificationHandle("com.unionpay",notification,this).handleNotification();
+                }
 
                 Log.d(TAG,"这是检测之外的其它通知");
                 Log.d(TAG,"包名是"+pkg);
