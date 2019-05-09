@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
             android:background="@color/colorPrimary"
             android:text="服务器地址"
@@ -76,10 +76,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
             android:background="@color/colorPrimary"
-            android:text="确认配置并启动"
+            android:text="确认配置"
             android:textColor="#fff" />
     </LinearLayout>
 
@@ -90,7 +90,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@drawable/log_icon"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 

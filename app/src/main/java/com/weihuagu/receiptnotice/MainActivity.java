@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String token = preferenceUtil.getToken();
         if (!TextUtils.isEmpty(token)){
             mIsRunning = true ;
-            btnSubmit.setText("停止服务");
             mEdtToken.setText(token);
         }
 //        boolean messageServiceAlive = serviceAlive(NLService.class.getName());
@@ -71,9 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnshowlog.setOnClickListener(this);
         posturl = findViewById(R.id.posturl);
         if (getPostUrl() != null)
-            posturl.setHint(getPostUrl());
-
-
+            posturl.setText(getPostUrl());
     }
 
     @Override
@@ -117,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     private boolean changeStatus() {
         mIsRunning = !mIsRunning;
-        btnSubmit.setText(mIsRunning ? "停止服务" : "确认配置并启动");
+        btnSubmit.setText(mIsRunning ? "重新配置" : "确认配置");
         if (!mIsRunning){
             //停止服务
 
@@ -132,18 +129,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Toast.makeText(this, "唯一码只能为八位数字或字符！", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (!changeStatus()) {
+                if (TextUtils.equals(mEdtToken.getText().toString().trim(),new PreferenceUtil(this).getToken())){
                     return;
                 }
+//                if (!changeStatus()) {
+//                    return;
+//                }
                 PreferenceUtil preferenceUtil = new PreferenceUtil(this);
                 preferenceUtil.setToken(mEdtToken.getText().toString().trim());
                 PostTask  task = new PostTask();
+                String tasknum=RandomUtil.getRandomTaskNum();
+                task.setRandomTaskNum(tasknum);
                 task.setOnAsyncResponse(this);
                 Map<String, String> tmpmap=new HashMap<>();
                 tmpmap.put("url",getPostUrl()+Constants.URL_BIND);
                 tmpmap.put("token",preferenceUtil.getToken());
                 task.execute(tmpmap);
-                //开启监听服务
 
 //        addStatusBar();
 
@@ -197,13 +198,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // TODO Auto-generated method stub
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // TODO Auto-generated method stub
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.main, menu);
+//        return true;
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
