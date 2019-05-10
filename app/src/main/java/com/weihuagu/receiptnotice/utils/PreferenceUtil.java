@@ -19,6 +19,28 @@ public class PreferenceUtil{
         public String getToken(){
                 return this.sharedPref.getString("token","");
         }
+        public PreferenceUtil putString(String key, String value) {
+                if (value == null) {
+                        sharedPref.edit().remove(key);
+                } else {
+                        sharedPref.edit().putString(key,value).commit();
+                }
+                return this;
+        }
+        public PreferenceUtil putBoolean(String key, Boolean value) {
+                if (value == null) {
+                        sharedPref.edit().remove(key);
+                } else {
+                        sharedPref.edit().putBoolean(key,value).commit();
+                }
+                return this;
+        }
+        public boolean getBoolean(String key, boolean defVaule) {
+                return sharedPref.getBoolean(key, defVaule);
+        }
+        public String getString(String key, String defVaule) {
+                return sharedPref.getString(key, defVaule);
+        }
         public String getDeviceid(){
                 return this.sharedPref.getString("deviceid","");
         }

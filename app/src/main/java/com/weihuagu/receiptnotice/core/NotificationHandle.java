@@ -5,6 +5,7 @@ import android.app.Notification;
 
 import com.weihuagu.receiptnotice.core.IDoPost;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.text.SimpleDateFormat;
@@ -31,7 +32,7 @@ public abstract class NotificationHandle{
                 title = extras.getString(Notification.EXTRA_TITLE, "");
                 // 获取通知内容
                 content = extras.getString(Notification.EXTRA_TEXT, "");
-                when = notification.when;
+                when = notification.when/1000;
                 Date date=new Date(when);
                 SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 notitime=format.format(date);
@@ -56,24 +57,6 @@ public abstract class NotificationHandle{
 
 
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
 

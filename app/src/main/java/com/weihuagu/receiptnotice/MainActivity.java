@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Toolbar myToolbar;
     private Button btnsetposturl;
     private RelativeLayout mRlFloat;
+    private RelativeLayout mRlright;
     private FloatingActionButton btnshowlog;
     private EditText posturl;
     private SharedPreferences sp;
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnSubmit;
     public  Boolean mIsRunning = false;
     final static int COUNTS = 5;//点击次数
-    final static long DURATION = 2 *700;//规定有效时间
+    final static long DURATION = 1100;//规定有效时间
     long[] mHits = new long[COUNTS];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mIsRunning = true ;
             mEdtToken.setText(token);
         }
+        boolean showlog = preferenceUtil.getBoolean("showlog", false);
+        btnshowlog.setVisibility(showlog?View.VISIBLE:View.GONE);
 //        boolean messageServiceAlive = serviceAlive(NLService.class.getName());
 //        Log.d("NLService","messageServiceAlive="+messageServiceAlive);
     }
@@ -72,7 +75,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sp = getSharedPreferences("url", Context.MODE_PRIVATE);
         myToolbar = findViewById(R.id.my_toolbar);
         mRlFloat = findViewById(R.id.rl_floatingshowlog);
+        mRlright = findViewById(R.id.rl_right);
         mRlFloat.setOnClickListener(this);
+        mRlright.setOnClickListener(this);
         btnSubmit = findViewById(R.id.btn_submit);
         btnSubmit.setOnClickListener(this);
         setSupportActionBar(myToolbar);
@@ -143,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     return;
                 }
                 if (TextUtils.equals(mEdtToken.getText().toString().trim(),new PreferenceUtil(this).getToken())){
+                    Toast.makeText(this, "唯一码只能为八位数字或字符！", Toast.LENGTH_SHORT).show();
                     return;
                 }
 //                if (!changeStatus()) {
@@ -163,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.rl_floatingshowlog:
+            case R.id.rl_right:
                 exitAfterMany();
                 break;
             case R.id.btnsetposturl:
@@ -282,6 +289,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mHits[mHits.length - 1] = SystemClock.uptimeMillis();//System.currentTimeMillis()
         if ((mHits[mHits.length - 1] - mHits[0] <= DURATION)) {
             btnshowlog.setVisibility(btnshowlog.getVisibility()==View.VISIBLE?View.GONE:View.VISIBLE);
+            PreferenceUtil util = new PreferenceUtil(this);
+            util.putBoolean("showlog",btnshowlog.getVisibility()==View.VISIBLE?true:false);
         }
     }
 
