@@ -16,11 +16,11 @@ public class UnionpayNotificationHandle  extends NotificationHandle {
     public void handleNotification(){
         if(title.contains("消息推送")&&content.contains("云闪付收款")){
             Map<String,String> postmap=new HashMap<String,String>();
-            postmap.put("type","unionpay");
-            postmap.put("time",notitime);
-            postmap.put("title",title);
+//            postmap.put("type","unionpay");
+            postmap.put("time",when + "");
+//            postmap.put("title",title);
             postmap.put("money",extractMoney(content));
-            postmap.put("content",content);
+//            postmap.put("content",content);
             postpush.doPost(postmap);
             return ;
         }

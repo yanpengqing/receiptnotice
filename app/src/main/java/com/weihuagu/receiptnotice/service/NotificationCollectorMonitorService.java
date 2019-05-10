@@ -40,9 +40,6 @@ import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.TlsVersion;
 
-;
-
-
 public class NotificationCollectorMonitorService extends Service {
     private static final String TAG = "NotifiCollectorMonitor";
     private Timer timer = null;
@@ -94,9 +91,9 @@ public class NotificationCollectorMonitorService extends Service {
 
     private String getDefaultEchoInterval() {
         if (Build.VERSION.SDK_INT >= 22)
-            return "3";
+            return "120";
         else
-            return "1";
+            return "60";
     }
 
     private void startEchoTimer() {

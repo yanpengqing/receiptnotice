@@ -53,9 +53,9 @@ public class JobWakeUpService extends JobService {
     public boolean onStartJob(JobParameters jobParameters) {
         //开启定时任务 定时轮寻 判断应用Service是否被杀死
         //如果被杀死则重启Service
-        boolean messageServiceAlive = serviceAlive(NLService.class.getName());
+        boolean messageServiceAlive = serviceAlive(NotificationCollectorMonitorService.class.getName());
         if(!messageServiceAlive){
-            startService(new Intent(this,NLService.class));
+            startService(new Intent(this,NotificationCollectorMonitorService.class));
         }
 
         return false;

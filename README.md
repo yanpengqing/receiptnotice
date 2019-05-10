@@ -33,13 +33,15 @@
 #### 这个可搭配服务端getreceipt-server
 [getreceipt-server](https://github.com/WeihuaGu/getreceipt-server)
 
-##### 捐助
-|支付宝 |扫红包码 |
-|-|-|
-|<img src="https://raw.githubusercontent.com/WeihuaGu/weihuagu.github.io/master/donate/shoukuanma.jpg" width="100"/> | <img src="https://raw.githubusercontent.com/WeihuaGu/weihuagu.github.io/master/donate/redcode.jpg" width="100"/>|
+安装后先将软件加入系统白名单，各个安卓系统的方法各有不同
 
-##### 引用项目
-| ||
-|-|-|
-|本软件从NLservice修改而来| [NLservice](https://github.com/WHD597312/NLservice)|
-|实时logcat | [Lynx](https://github.com/pedrovgs/Lynx) |
+打开软件自动跳转到获取通知权限页面，允许本应用监控通知
+
+返回到软件主页，填写你要接受收款信息通知的url以及唯一码,软件在接到收款通知后，会用post的方法，发送json信息到服务器
+
+这种方法的准确率怎么样？或者怎么提高准确率？
+1.尽量同时支持微信支付与支付宝支付 我们可以设用户选择的付款方式为事件A,那么当你同时支持两种方式时，一次付款的p(A)=1/2
+2.对价格给一个最后一位的减免 我们同样设付款的价格为事件B，那么出现这个价格的概率为p(B)=1/10*1/10=1/100
+3.考虑时间因素 我们假定用户购买的时间也是随机的，如果我们只考虑小时和分钟数，那么这个时间的概率大概是p(C)=1/13*1/60=1/780
+4.因为支付方式的选择与减免的金额与购买的时间，我们可以认为独立 那么这种方式出错的概率大概就是p(ABC)=p(A)p(B)p(C)=(1/2)(1/100)(1/780)=1/156000
+即如果能做到上面的两点，一次付款出错的概率大概在15万分之一，这个出错的概率，如果购买量小的化，是可以接受的。
