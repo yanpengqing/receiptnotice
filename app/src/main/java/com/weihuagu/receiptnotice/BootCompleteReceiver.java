@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.weihuagu.receiptnotice.service.NLService;
+
 public class BootCompleteReceiver extends BroadcastReceiver {
 
     private static final String ACTION = "android.intent.action.BOOT_COMPLETED";

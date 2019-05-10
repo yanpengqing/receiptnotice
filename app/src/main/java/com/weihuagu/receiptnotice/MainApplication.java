@@ -6,6 +6,8 @@ import android.os.Build;
 
 import com.tao.admin.loglib.IConfig;
 import com.tao.admin.loglib.TLogApplication;
+import com.weihuagu.receiptnotice.service.JobWakeUpService;
+import com.weihuagu.receiptnotice.service.NotificationCollectorMonitorService;
 
 public class MainApplication extends Application {
 

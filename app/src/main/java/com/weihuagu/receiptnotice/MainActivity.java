@@ -15,8 +15,6 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +24,12 @@ import android.widget.Toast;
 
 import com.github.pedrovgs.lynx.LynxActivity;
 import com.github.pedrovgs.lynx.LynxConfig;
+import com.weihuagu.receiptnotice.core.AsyncResponse;
+import com.weihuagu.receiptnotice.core.Constants;
+import com.weihuagu.receiptnotice.core.PostTask;
+import com.weihuagu.receiptnotice.utils.LogUtil;
+import com.weihuagu.receiptnotice.utils.PreferenceUtil;
+import com.weihuagu.receiptnotice.utils.RandomUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnSubmit;
     public  Boolean mIsRunning = false;
     final static int COUNTS = 5;//点击次数
-    final static long DURATION = 2 * 1000;//规定有效时间
+    final static long DURATION = 2 *700;//规定有效时间
     long[] mHits = new long[COUNTS];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,8 +149,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                }
                 PreferenceUtil preferenceUtil = new PreferenceUtil(this);
                 preferenceUtil.setToken(mEdtToken.getText().toString().trim());
-                PostTask  task = new PostTask();
-                String tasknum=RandomUtil.getRandomTaskNum();
+                PostTask task = new PostTask();
+                String tasknum= RandomUtil.getRandomTaskNum();
                 task.setRandomTaskNum(tasknum);
                 task.setOnAsyncResponse(this);
                 Map<String, String> tmpmap=new HashMap<>();
@@ -276,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //实现左移，然后最后一个位置更新距离开机的时间，如果最后一个时间和最开始时间小于DURATION，即连续5次点击
         mHits[mHits.length - 1] = SystemClock.uptimeMillis();//System.currentTimeMillis()
         if ((mHits[mHits.length - 1] - mHits[0] <= DURATION)) {
-            btnshowlog.setVisibility(View.VISIBLE);
+            btnshowlog.setVisibility(btnshowlog.getVisibility()==View.VISIBLE?View.GONE:View.VISIBLE);
         }
     }
 

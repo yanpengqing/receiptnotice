@@ -113,7 +113,7 @@
 
 # Application classes that will be serialized/deserialized over Gson
 -keep class com.google.gson.examples.android.model.** { *; }
-#-keep class com.leshukeji.smart_toilet.beans.** { *; }
+-keep class com.weihuagu.receiptnotice.beans.** { *; }
 ##---------------End: proguard configuration for Gson  ----------
 # Retrofit
 -dontwarn retrofit2.**
