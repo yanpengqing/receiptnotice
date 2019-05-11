@@ -32,191 +32,202 @@ import java.util.Date;
 import java.util.Map;
 
 public class NLService extends NotificationListenerService implements AsyncResponse, IDoPost {
-        private String TAG="NLService";
-        private String posturl=null;
-        private Context context=null;
-        private String getPostUrl(){
-                SharedPreferences sp=getSharedPreferences("url", 0);
-                this.posturl =sp.getString("posturl", null);
-                if (posturl==null)
-                        return null;
-                else
-                        return posturl;
+    private String TAG = "NLService";
+    private String posturl = null;
+    private Context context = null;
+
+    private String getPostUrl() {
+        SharedPreferences sp = getSharedPreferences("url", 0);
+        this.posturl = sp.getString("posturl", null);
+        if (posturl == null)
+            return null;
+        else
+            return posturl;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_STICKY;
+    }
+
+    @Override
+    public void onNotificationPosted(StatusBarNotification sbn) {
+        //        super.onNotificationPosted(sbn);
+        //这里只是获取了包名和通知提示信息，其他数据可根据需求取，注意空指针就行
+        Log.d(TAG, "接受到通知消息");
+        Log.d(TAG, "posturl:" + getPostUrl());
+        if (getPostUrl() == null)
+            return;
+
+        Notification notification = sbn.getNotification();
+        String pkg = sbn.getPackageName();
+        if (notification == null) {
+            return;
         }
 
-        @Override
-        public int onStartCommand(Intent intent, int flags, int startId) {
-                return START_STICKY;
-        }
+        Bundle extras = notification.extras;
+        if (extras == null)
+            return;
 
-        @Override
-        public void onNotificationPosted(StatusBarNotification sbn) {
-                //        super.onNotificationPosted(sbn);
-                //这里只是获取了包名和通知提示信息，其他数据可根据需求取，注意空指针就行
-                Log.d(TAG,"接受到通知消息");
-                Log.d(TAG,"posturl:"+getPostUrl());
-                if(getPostUrl()==null)
-                        return;
+        Log.d(TAG, "-----------------");
 
-                Notification notification = sbn.getNotification();
-                String pkg = sbn.getPackageName();
-                if (notification == null) {
-                        return;
-                }
+        //mipush
+        if ("com.xiaomi.xmsf".equals(pkg)) {
+            if (getNotiTitle(extras).contains("支付宝")) {
+                //printNotify(getNotitime(notification),getNotiTitle(extras),getNotiContent(extras));
+                new MipushNotificationHandle("com.xiaomi.xmsf", notification, this).handleNotification();
 
-                Bundle extras = notification.extras;
-                if(extras==null)
-                        return;
-
-                Log.d(TAG,"-----------------");
-
-                //mipush
-                if("com.xiaomi.xmsf".equals(pkg)){
-                        if(getNotiTitle(extras).contains("支付宝")){
-                                //printNotify(getNotitime(notification),getNotiTitle(extras),getNotiContent(extras));
-                                new MipushNotificationHandle("com.xiaomi.xmsf",notification,this).handleNotification();
-
-                        }
-
-                }
-                //支付宝
-                if("com.eg.android.AlipayGphone".equals(pkg)){
-
-                        new AlipayNotificationHandle("com.eg.android.AlipayGphone",notification,this).handleNotification();
-
-                }
-                //应用管理GCM代收
-                if("android".equals(pkg)){
-
-                        new XposedmoduleNotificationHandle("github.tornaco.xposedmoduletest",notification,this).handleNotification();
-                }
-                //微信
-                if("com.tencent.mm".equals(pkg)){
-
-                        new WechatNotificationHandle("com.tencent.mm",notification,this).handleNotification();
-
-                }
-                //收钱吧
-                if("com.wosai.cashbar".equals(pkg)){
-                        new CashbarNotificationHandle("com.wosai.cashbar",notification,this).handleNotification();
-                }
-                //云闪付
-                if("com.unionpay".equals(pkg)){
-                        new UnionpayNotificationHandle("com.unionpay",notification,this).handleNotification();
-                }
-
-                Log.d(TAG,"这是检测之外的其它通知");
-                Log.d(TAG,"包名是"+pkg);
-                printNotify(getNotitime(notification),getNotiTitle(extras),getNotiContent(extras));
-
-                Log.d(TAG,"**********************");
-
+            }
 
         }
+        //支付宝
+        if ("com.eg.android.AlipayGphone".equals(pkg)) {
 
-        @Override
-        public void onNotificationRemoved(StatusBarNotification sbn) {
-                if (Build.VERSION.SDK_INT >19)
-                        super.onNotificationRemoved(sbn);
-        }
-
-        private void sendBroadcast(String msg) {
-                Intent intent = new Intent(getPackageName());
-                intent.putExtra("text", msg);
-                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-        }
-
-        private String getNotitime(Notification notification){
-
-                long when=notification.when;
-                Date date=new Date(when);
-                SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                String notitime=format.format(date);
-                return notitime;
+            new AlipayNotificationHandle("com.eg.android.AlipayGphone", notification, this).handleNotification();
 
         }
+        //应用管理GCM代收
+        if ("android".equals(pkg)) {
 
-        private String getNotiTitle(Bundle extras){
-                String title=null;
-                // 获取通知标题
-                title = extras.getString(Notification.EXTRA_TITLE, "");
-                return title;
+            new XposedmoduleNotificationHandle("github.tornaco.xposedmoduletest", notification, this).handleNotification();
+        }
+        //微信
+        if ("com.tencent.mm".equals(pkg)) {
+
+            new WechatNotificationHandle("com.tencent.mm", notification, this).handleNotification();
+
+        }
+        //收钱吧
+        if ("com.wosai.cashbar".equals(pkg)) {
+            new CashbarNotificationHandle("com.wosai.cashbar", notification, this).handleNotification();
+        }
+        //云闪付
+        if ("com.unionpay".equals(pkg)) {
+            new UnionpayNotificationHandle("com.unionpay", notification, this).handleNotification();
         }
 
-        private String getNotiContent(Bundle extras){
-                String content=null;
-                // 获取通知内容
-                content = extras.getString(Notification.EXTRA_TEXT, "");
-                return content;
-        }
+        Log.d(TAG, "这是检测之外的其它通知");
+        Log.d(TAG, "包名是" + pkg);
+        printNotify(getNotitime(notification), getNotiTitle(extras), getNotiContent(extras));
 
-        private void printNotify(String notitime,String title,String content){
-                Log.d(TAG,notitime);
-                Log.d(TAG,title);
-                Log.d(TAG,content);
-        }
+        Log.d(TAG, "**********************");
 
 
-        public void doPost(Map<String, String> params){
-                if(this.posturl==null)
-                        return;
-                PreferenceUtil preference=new PreferenceUtil(getBaseContext());
-                Map<String, String> tmpmap=params;
-                Map<String, String> postmap=null;
-                String tasknum= RandomUtil.getRandomTaskNum();
-                Log.d(TAG,"开始准备进行post");
-                PostTask mtask = new PostTask();
-                mtask.setRandomTaskNum(tasknum);
-                mtask.setOnAsyncResponse(this);
+    }
+
+    @Override
+    public void onNotificationRemoved(StatusBarNotification sbn) {
+        if (Build.VERSION.SDK_INT > 19)
+            super.onNotificationRemoved(sbn);
+    }
+
+    private void sendBroadcast(String msg) {
+        Intent intent = new Intent(getPackageName());
+        intent.putExtra("text", msg);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    private String getNotitime(Notification notification) {
+
+        long when = notification.when;
+        Date date = new Date(when);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String notitime = format.format(date);
+        return notitime;
+
+    }
+
+    private String getNotiTitle(Bundle extras) {
+        String title = null;
+        // 获取通知标题
+        title = extras.getString(Notification.EXTRA_TITLE, "");
+        return title;
+    }
+
+    private String getNotiContent(Bundle extras) {
+        String content = null;
+        // 获取通知内容
+        content = extras.getString(Notification.EXTRA_TEXT, "");
+        return content;
+    }
+
+    private void printNotify(String notitime, String title, String content) {
+        Log.d(TAG, notitime);
+        Log.d(TAG, title);
+        Log.d(TAG, content);
+    }
+
+
+    public void doPost(Map<String, String> params) {
+        if (this.posturl == null)
+            return;
+        PreferenceUtil preference = new PreferenceUtil(getBaseContext());
+        Map<String, String> tmpmap = params;
+        Map<String, String> postmap = null;
+        String tasknum = RandomUtil.getRandomTaskNum();
+        Log.d(TAG, "开始准备进行post");
+        PostTask mtask = new PostTask();
+        mtask.setRandomTaskNum(tasknum);
+        mtask.setOnAsyncResponse(this);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getPostUrl() + Constants.URL_CALLBACK)
+                .append("&token=")
+                .append(new PreferenceUtil(this).getToken())
+                .append("&time=")
+                .append(tmpmap.get("time"))
+                .append("&money=")
+                .append(tmpmap.get("money"));
 //                tmpmap.put("encrypt","0");
-                tmpmap.put("url",this.posturl+Constants.URL_CALLBACK);
-                tmpmap.put("token",new PreferenceUtil(this).getToken());
-                String deviceid=preference.getDeviceid();
+        tmpmap.put("url", stringBuilder.toString());
+        tmpmap.put("token", new PreferenceUtil(this).getToken());
+        String deviceid = preference.getDeviceid();
 //                tmpmap.put("deviceid",(!deviceid.equals("")? deviceid:DeviceInfoUtil.getUniquePsuedoID()));
 
-                if(preference.isEncrypt()){
-                        String encrypt_type=preference.getEncryptMethod();
-                        if(encrypt_type!=null){
-                                String key=preference.getPasswd();
-                                EncryptFactory encryptfactory=new EncryptFactory(key);
-                                Log.d(TAG,"加密方法"+encrypt_type);
-                                Log.d(TAG,"加密秘钥"+key);
-                                Encrypter encrypter=encryptfactory.getEncrypter(encrypt_type);
-                                if(encrypter!=null&&key!=null){
-                                        postmap=encrypter.transferMapValue(tmpmap);
-                                        postmap.put("url",this.posturl);
-                                }
-
-                        }
+        if (preference.isEncrypt()) {
+            String encrypt_type = preference.getEncryptMethod();
+            if (encrypt_type != null) {
+                String key = preference.getPasswd();
+                EncryptFactory encryptfactory = new EncryptFactory(key);
+                Log.d(TAG, "加密方法" + encrypt_type);
+                Log.d(TAG, "加密秘钥" + key);
+                Encrypter encrypter = encryptfactory.getEncrypter(encrypt_type);
+                if (encrypter != null && key != null) {
+                    postmap = encrypter.transferMapValue(tmpmap);
+                    postmap.put("url", this.posturl);
                 }
+
+            }
+        }
 
 //                Map<String, String> recordmap=tmpmap;
 //                recordmap.remove("encrypt");
-                LogUtil.postRecordLog(tasknum,tmpmap.toString());
+        LogUtil.postRecordLog(tasknum, tmpmap.toString());
 
 
-                if(postmap!=null)
-                        mtask.execute(postmap);
-                else
-                        mtask.execute(tmpmap);
+        if (postmap != null)
+            mtask.execute(postmap);
+        else
+            mtask.execute(tmpmap);
 
-        }
-
-
-        @Override
-        public void onDataReceivedSuccess(String[] returnstr) {
-                Log.d(TAG,"Post Receive-returned post string");
-                Log.d(TAG,returnstr[2]);
-                LogUtil.postResultLog(returnstr[0],returnstr[1],returnstr[2]);
+    }
 
 
-        }
-        @Override
-        public void onDataReceivedFailed(String[] returnstr) {
-                // TODO Auto-generated method stub
-                Log.d(TAG,"Post Receive-post error");
-                LogUtil.postResultLog(returnstr[0],returnstr[1],returnstr[2]);
+    @Override
+    public void onDataReceivedSuccess(String[] returnstr) {
+        Log.d(TAG, "Post Receive-returned post string");
+        Log.d(TAG, returnstr[2]);
+        LogUtil.postResultLog(returnstr[0], returnstr[1], returnstr[2]);
 
 
-        }
+    }
+
+    @Override
+    public void onDataReceivedFailed(String[] returnstr) {
+        // TODO Auto-generated method stub
+        Log.d(TAG, "Post Receive-post error");
+        LogUtil.postResultLog(returnstr[0], returnstr[1], returnstr[2]);
+
+
+    }
 }

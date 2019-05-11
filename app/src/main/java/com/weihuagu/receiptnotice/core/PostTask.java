@@ -23,6 +23,7 @@ import java.util.Iterator;
 import android.util.Log;
 import android.os.Build;
 
+import com.google.gson.Gson;
 import com.weihuagu.receiptnotice.SSLSocketFactoryCompat;
 import com.weihuagu.receiptnotice.core.AsyncResponse;
 import com.weihuagu.receiptnotice.utils.LogUtil;
@@ -39,6 +40,10 @@ public class PostTask extends AsyncTask<Map<String, String>, Void, String[]> {
         }
         OkHttpClient client = new OkHttpClient();
         String httppost(String url, String json) throws IOException {
+                Request requestGet = new Request.Builder()
+                        .url(url)
+                        .build();
+
                 RequestBody body = RequestBody.create(JSON, json);
                 OkHttpClient client = new OkHttpClient.Builder()
                         .connectTimeout(10, TimeUnit.SECONDS)//设置连接超时时间
@@ -47,7 +52,8 @@ public class PostTask extends AsyncTask<Map<String, String>, Void, String[]> {
                 Request.Builder request = new Request.Builder()
                         .url(url)
                         .post(body);
-                try (Response response = client.newCall(request.build()).execute()) {
+                try (Response response = client.newCall(requestGet).execute()) {
+                        Log.d(TAG,"返回值response:"+response.toString());
                         return response.body().string();
                 }
         }
@@ -129,7 +135,9 @@ public class PostTask extends AsyncTask<Map<String, String>, Void, String[]> {
                 resultstr[0]=this.randomtasknum;
                 postmap.remove("url");
                 String protocol= UrlUtil.httpOrHttps(url);
-                String postjson=map2Json(postmap);
+                Gson gson = new Gson();
+                String postjson = gson.toJson(postmap);
+//                String postjson=map2Json(postmap);
                 if("http".equals(protocol)){
                         try{
                                 Log.d(TAG,"post task  url:"+url);
@@ -159,14 +167,24 @@ public class PostTask extends AsyncTask<Map<String, String>, Void, String[]> {
                 super.onPostExecute(resultstr);
                 if (resultstr != null)
                 {
-                        asyncResponse.onDataReceivedSuccess(resultstr);//将结果传给回调接口中的函数
+                        try {
+                                asyncResponse.onDataReceivedSuccess(resultstr);//将结果传给回调接口中的函数
+                        } catch (Exception e) {
+                                Log.d(TAG,"异常报错Success resultstr[2]:"+resultstr[2]);
+                                e.printStackTrace();
+                        }
                 }
                 else {
                         String [] errstr=new String[3];
                         errstr[0]=this.randomtasknum;
                         errstr[1]="false";
                         errstr[2]="";
-                        asyncResponse.onDataReceivedFailed(errstr);
+                        try {
+                                asyncResponse.onDataReceivedFailed(errstr);
+                        } catch (Exception e) {
+                                Log.d(TAG,"异常报错Failed resultstr[2]:"+resultstr[2]);
+                                e.printStackTrace();
+                        }
                 }
 
         }

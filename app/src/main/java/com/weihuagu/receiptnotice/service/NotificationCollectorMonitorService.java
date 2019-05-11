@@ -5,15 +5,19 @@ import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.Process;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.weihuagu.receiptnotice.MainApplication;
 import com.weihuagu.receiptnotice.SSLSocketFactoryCompat;
 import com.weihuagu.receiptnotice.beans.DeviceBean;
+import com.weihuagu.receiptnotice.core.Constants;
 import com.weihuagu.receiptnotice.utils.DeviceInfoUtil;
 import com.weihuagu.receiptnotice.utils.LogUtil;
 import com.weihuagu.receiptnotice.utils.PreferenceUtil;
@@ -46,6 +50,7 @@ public class NotificationCollectorMonitorService extends Service {
     private String echointerval = null;
     private TimerTask echotimertask = null;
     private Socket mSocket;
+    private String posturl = null;
 
     @Override
     public void onCreate() {
@@ -117,9 +122,11 @@ public class NotificationCollectorMonitorService extends Service {
                     return;
                 }
                 LogUtil.debugLog("once socketio timer task run");
-                boolean flag = echoServer();
-                if (!flag)
-                    LogUtil.debugLog("socketio timer task not have a server");
+                if (getPostUrl() != null && (!TextUtils.isEmpty(new PreferenceUtil(MainApplication.getApp()).getToken()))) {
+                    echoServer();
+                }
+//                if (!flag)
+//                    LogUtil.debugLog("socketio timer task not have a server");
             }
         };
     }
@@ -157,11 +164,11 @@ public class NotificationCollectorMonitorService extends Service {
             DeviceBean device = new DeviceBean();
             String deviceid = preference.getDeviceid();
             deviceid = (!deviceid.equals("") ? deviceid : DeviceInfoUtil.getUniquePsuedoID());
-            device.setDeviceid(deviceid);
-            device.setConnectedtime(time);
+            device.setToken(new PreferenceUtil(this).getToken());
+            device.setConnectedtime(System.currentTimeMillis()+"");
             LogUtil.debugLog("start connect socketio");
             if (mSocket == null) {
-                echoServerBySocketio("https://juan.214sq.com/", gson.toJson(device));
+                echoServerBySocketio(getPostUrl() + Constants.URL_SOCKET, gson.toJson(device));
             } else {
                 mSocket.emit("echo", gson.toJson(device));
             }
@@ -292,5 +299,14 @@ public class NotificationCollectorMonitorService extends Service {
 
 
         }
+    }
+
+    private String getPostUrl() {
+        SharedPreferences sp = getSharedPreferences("url", 0);
+        this.posturl = sp.getString("posturl", null);
+        if (posturl == null)
+            return null;
+        else
+            return posturl;
     }
 }

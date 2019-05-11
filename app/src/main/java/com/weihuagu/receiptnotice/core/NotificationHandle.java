@@ -32,7 +32,7 @@ public abstract class NotificationHandle{
                 title = extras.getString(Notification.EXTRA_TITLE, "");
                 // 获取通知内容
                 content = extras.getString(Notification.EXTRA_TEXT, "");
-                when = notification.when/1000;
+                when = notification.when;
                 Date date=new Date(when);
                 SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 notitime=format.format(date);

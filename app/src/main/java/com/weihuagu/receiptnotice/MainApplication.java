@@ -1,6 +1,7 @@
 package com.weihuagu.receiptnotice;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
@@ -10,14 +11,17 @@ import com.weihuagu.receiptnotice.service.JobWakeUpService;
 import com.weihuagu.receiptnotice.service.NotificationCollectorMonitorService;
 
 public class MainApplication extends Application {
-
+    private static Context mContenx;
     @Override
     public void onCreate() {
         super.onCreate();
+        mContenx = this;
         startNotificationService();
         initLogConfig();
     }
-
+      public static Context getApp(){
+        return  mContenx;
+    }
     private void initLogConfig() {
         TLogApplication.initialize(this);
         IConfig.getInstance().isShowLog(true)//是否在logcat中打印log,默认不打印

@@ -25,6 +25,8 @@ import android.widget.Toast;
 
 import com.github.pedrovgs.lynx.LynxActivity;
 import com.github.pedrovgs.lynx.LynxConfig;
+import com.google.gson.Gson;
+import com.weihuagu.receiptnotice.beans.BaseBean;
 import com.weihuagu.receiptnotice.core.AsyncResponse;
 import com.weihuagu.receiptnotice.core.Constants;
 import com.weihuagu.receiptnotice.core.PostTask;
@@ -147,10 +149,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Toast.makeText(this, "唯一码只能为八位数字或字符！", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (TextUtils.equals(mEdtToken.getText().toString().trim(),new PreferenceUtil(this).getToken())){
-                    Toast.makeText(this, "唯一码只能为八位数字或字符！", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+//                if (TextUtils.equals(mEdtToken.getText().toString().trim(),new PreferenceUtil(this).getToken())){
+//                    Toast.makeText(this, "唯一码只能为八位数字或字符！", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
 //                if (!changeStatus()) {
 //                    return;
 //                }
@@ -161,7 +163,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 task.setRandomTaskNum(tasknum);
                 task.setOnAsyncResponse(this);
                 Map<String, String> tmpmap=new HashMap<>();
-                tmpmap.put("url",getPostUrl()+Constants.URL_BIND);
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append(getPostUrl()+Constants.URL_BIND)
+                      .append("&token=")
+                      .append(preferenceUtil.getToken());
+                tmpmap.put("url",stringBuilder.toString());
                 tmpmap.put("token",preferenceUtil.getToken());
                 task.execute(tmpmap);
 
@@ -266,6 +272,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onDataReceivedSuccess(String[] returnstr) {
         LogUtil.postResultLog(returnstr[0],returnstr[1],returnstr[2]);
+        Gson gson = new Gson();
+        BaseBean baseBean = gson.fromJson(returnstr[2], BaseBean.class);
+        if (baseBean!=null){
+            Toast.makeText(this,baseBean.getMessage(),Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

@@ -12,6 +12,7 @@ public class Constants {
      */
     public static final String URL_BIND= "/api/phone/bind";
     public static final String URL_CALLBACK = "/api/phone/callback";
+    public static final String URL_SOCKET = "/api/phone/socket";
     public static final String ACTION_BROWSER_CONTEXT_MENU = "ACTION_BROWSER_OPEN";
 
     /**
