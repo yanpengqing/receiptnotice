@@ -101,7 +101,7 @@ public class NotificationCollectorMonitorService extends Service implements Asyn
 
     private String getDefaultEchoInterval() {
         if (Build.VERSION.SDK_INT >= 22)
-            return "60";
+            return "30";
         else
             return "30";
     }
