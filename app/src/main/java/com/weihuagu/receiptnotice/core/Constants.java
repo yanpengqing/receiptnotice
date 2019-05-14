@@ -10,6 +10,7 @@ public class Constants {
     /**
      * Actions.
      */
+    public static final String URL_BASE= "http://115.28.5.40";
     public static final String URL_BIND= "/api/phone/bind";
     public static final String URL_CALLBACK = "/api/phone/callback";
     public static final String URL_SOCKET = "/api/phone/setStatus";

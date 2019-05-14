@@ -25,6 +25,7 @@
       >
 
         <android.support.design.widget.TextInputLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -42,6 +43,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <Button
+            android:visibility="gone"
             android:id="@+id/btnsetposturl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

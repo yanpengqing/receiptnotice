@@ -40,6 +40,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.weihuagu.receiptnotice.core.Constants.URL_BASE;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, AsyncResponse {
 
     private static final String TAG = "MainActivity";
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setPostUrl();
         initView();
         PreferenceUtil preferenceUtil = new PreferenceUtil(this);
         String token = preferenceUtil.getToken();
@@ -191,11 +194,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setPostUrl() {
         SharedPreferences.Editor edit = sp.edit();
         //通过editor对象写入数据
-        edit.putString("posturl", posturl.getText().toString());
+        edit.putString("posturl", Constants.URL_BASE);
         //提交数据存入到xml文件中
         edit.apply();
-        Toast.makeText(getApplicationContext(), "已经设置posturl为：" + posturl.getText().toString(),
-                Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "已经设置posturl为：" + posturl.getText().toString(),
+//                Toast.LENGTH_SHORT).show();
     }
 
     private String getPostUrl() {
