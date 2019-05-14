@@ -62,8 +62,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setPostUrl();
         initView();
+        setPostUrl();
         PreferenceUtil preferenceUtil = new PreferenceUtil(this);
         String token = preferenceUtil.getToken();
         if (!TextUtils.isEmpty(token)){
