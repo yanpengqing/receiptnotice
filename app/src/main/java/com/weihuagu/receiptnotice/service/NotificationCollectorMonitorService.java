@@ -17,10 +17,13 @@ import com.google.gson.Gson;
 import com.weihuagu.receiptnotice.MainApplication;
 import com.weihuagu.receiptnotice.SSLSocketFactoryCompat;
 import com.weihuagu.receiptnotice.beans.DeviceBean;
+import com.weihuagu.receiptnotice.core.AsyncResponse;
 import com.weihuagu.receiptnotice.core.Constants;
+import com.weihuagu.receiptnotice.core.PostTask;
 import com.weihuagu.receiptnotice.utils.DeviceInfoUtil;
 import com.weihuagu.receiptnotice.utils.LogUtil;
 import com.weihuagu.receiptnotice.utils.PreferenceUtil;
+import com.weihuagu.receiptnotice.utils.RandomUtil;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -30,7 +33,9 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -44,7 +49,7 @@ import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.TlsVersion;
 
-public class NotificationCollectorMonitorService extends Service {
+public class NotificationCollectorMonitorService extends Service implements AsyncResponse {
     private static final String TAG = "NotifiCollectorMonitor";
     private Timer timer = null;
     private String echointerval = null;
@@ -96,9 +101,9 @@ public class NotificationCollectorMonitorService extends Service {
 
     private String getDefaultEchoInterval() {
         if (Build.VERSION.SDK_INT >= 22)
-            return "120";
-        else
             return "60";
+        else
+            return "30";
     }
 
     private void startEchoTimer() {
@@ -123,12 +128,26 @@ public class NotificationCollectorMonitorService extends Service {
                 }
                 LogUtil.debugLog("once socketio timer task run");
                 if (getPostUrl() != null && (!TextUtils.isEmpty(new PreferenceUtil(MainApplication.getApp()).getToken()))) {
-                    echoServer();
+                    getServer();
+//                    echoServer();
                 }
 //                if (!flag)
 //                    LogUtil.debugLog("socketio timer task not have a server");
             }
         };
+    }
+
+    private void getServer() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getPostUrl() + Constants.URL_SOCKET)
+                .append("&token=")
+                .append(new PreferenceUtil(NotificationCollectorMonitorService.this).getToken());
+        Map<String, String> tmpmap = new HashMap<>();
+        tmpmap.put("url", stringBuilder.toString());
+        PostTask mtask = new PostTask();
+        mtask.setOnAsyncResponse(this);
+        mtask.setRandomTaskNum( RandomUtil.getRandomTaskNum());
+        mtask.execute(tmpmap);
     }
 
     private void restartEchoTimer() {
@@ -167,11 +186,11 @@ public class NotificationCollectorMonitorService extends Service {
             device.setToken(new PreferenceUtil(this).getToken());
             device.setConnectedtime(System.currentTimeMillis()+"");
             LogUtil.debugLog("start connect socketio");
-            if (mSocket == null) {
+//            if (mSocket == null) {
                 echoServerBySocketio(getPostUrl() + Constants.URL_SOCKET, gson.toJson(device));
-            } else {
-                mSocket.emit("echo", gson.toJson(device));
-            }
+//            } else {
+//                mSocket.emit("echo", gson.toJson(device));
+//            }
             LogUtil.debugLog(gson.toJson(device));
             return true;
         } else
@@ -218,6 +237,16 @@ public class NotificationCollectorMonitorService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    @Override
+    public void onDataReceivedSuccess(String[] returnstr) {
+        LogUtil.postResultLog(returnstr[0], returnstr[1], returnstr[2]);
+    }
+
+    @Override
+    public void onDataReceivedFailed(String[] returnstr) {
+        LogUtil.postResultLog(returnstr[0], returnstr[1], returnstr[2]);
     }
 
     public static class EchoSocket {

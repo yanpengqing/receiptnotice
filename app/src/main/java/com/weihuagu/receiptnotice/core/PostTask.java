@@ -53,7 +53,7 @@ public class PostTask extends AsyncTask<Map<String, String>, Void, String[]> {
                         .url(url)
                         .post(body);
                 try (Response response = client.newCall(requestGet).execute()) {
-                        Log.d(TAG,"返回值response:"+response.toString());
+                        Log.d(TAG,"返回值response:"+response.toString()+"response.body():"+response.body().toString());
                         return response.body().string();
                 }
         }
