@@ -10,4 +10,5 @@
 /captures
 .externalNativeBuild
 /app/key.properties
+/app/release
 
