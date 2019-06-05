@@ -16,8 +16,11 @@ import com.weihuagu.receiptnotice.core.Constants;
 import com.weihuagu.receiptnotice.core.IDoPost;
 import com.weihuagu.receiptnotice.core.PostTask;
 import com.weihuagu.receiptnotice.handle.AlipayNotificationHandle;
+import com.weihuagu.receiptnotice.handle.BankCibmbNotificationHandle;
 import com.weihuagu.receiptnotice.handle.CashbarNotificationHandle;
+import com.weihuagu.receiptnotice.handle.IcbcelifeNotificationHandle;
 import com.weihuagu.receiptnotice.handle.MipushNotificationHandle;
+import com.weihuagu.receiptnotice.handle.SMSNotificationHandle;
 import com.weihuagu.receiptnotice.handle.UnionpayNotificationHandle;
 import com.weihuagu.receiptnotice.handle.WechatNotificationHandle;
 import com.weihuagu.receiptnotice.handle.XposedmoduleNotificationHandle;
@@ -105,7 +108,18 @@ public class NLService extends NotificationListenerService implements AsyncRespo
         if ("com.unionpay".equals(pkg)) {
             new UnionpayNotificationHandle("com.unionpay", notification, this).handleNotification();
         }
-
+        //短信
+        if ("com.android.mms".equals(pkg)) {
+            new SMSNotificationHandle("com.android.mms", notification, this).handleNotification();
+        }
+        //兴业银行app
+        if ("com.cib.cibmb".equals(pkg)) {
+            new BankCibmbNotificationHandle("com.cib.cibmb", notification, this).handleNotification();
+        }
+        //工银商户之家
+        if ("com.icbc.biz.elife".equals(pkg)) {
+            new IcbcelifeNotificationHandle("com.icbc.biz.elife", notification, this).handleNotification();
+        }
         Log.d(TAG, "这是检测之外的其它通知");
         Log.d(TAG, "包名是" + pkg);
         printNotify(getNotitime(notification), getNotiTitle(extras), getNotiContent(extras));
@@ -176,6 +190,8 @@ public class NLService extends NotificationListenerService implements AsyncRespo
                 .append(new PreferenceUtil(this).getToken())
                 .append("&time=")
                 .append(tmpmap.get("time"))
+                .append("&type=")
+                .append(tmpmap.get("type"))
                 .append("&money=")
                 .append(tmpmap.get("money"));
 //                tmpmap.put("encrypt","0");

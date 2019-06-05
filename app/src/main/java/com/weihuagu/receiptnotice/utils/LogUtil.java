@@ -5,7 +5,9 @@
  */
 
 package com.weihuagu.receiptnotice.utils;
+
 import android.util.Log;
+
 import com.tao.admin.loglib.Logger;
 
 public class LogUtil {
@@ -18,6 +20,10 @@ public class LogUtil {
 
         public static void debugLog(String info){
                 Log.d(TAG,info);
+        }
+        
+        public static void debugLogWithDeveloper(String info){
+                Log.d(DEBUGTAG,info);
         }
 
         public static void debugLogWithJava(String info){

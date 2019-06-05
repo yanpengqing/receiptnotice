@@ -274,7 +274,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onDataReceivedSuccess(String[] returnstr) {
-        LogUtil.postResultLog(returnstr[0],returnstr[1],returnstr[2]);
+        LogUtil.infoLog(returnstr[0]+returnstr[1]+returnstr[2]);
         Gson gson = new Gson();
         BaseBean baseBean = gson.fromJson(returnstr[2], BaseBean.class);
         if (baseBean!=null){
@@ -284,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onDataReceivedFailed(String[] returnstr) {
-        LogUtil.postResultLog(returnstr[0],returnstr[1],returnstr[2]);
+        LogUtil.infoLog(returnstr[0]+returnstr[1]+returnstr[2]);
     }
     /**
      * 连续点击多次退出

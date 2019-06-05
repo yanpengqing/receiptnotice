@@ -241,12 +241,12 @@ public class NotificationCollectorMonitorService extends Service implements Asyn
 
     @Override
     public void onDataReceivedSuccess(String[] returnstr) {
-        LogUtil.postResultLog(returnstr[0], returnstr[1], returnstr[2]);
+        LogUtil.infoLog(returnstr[0]+returnstr[1]+returnstr[2]);
     }
 
     @Override
     public void onDataReceivedFailed(String[] returnstr) {
-        LogUtil.postResultLog(returnstr[0], returnstr[1], returnstr[2]);
+        LogUtil.infoLog(returnstr[0]+returnstr[1]+returnstr[2]);
     }
 
     public static class EchoSocket {
