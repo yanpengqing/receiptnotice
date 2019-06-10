@@ -14,7 +14,7 @@ public class BankCibmbNotificationHandle extends NotificationHandle {
     }
 
     public void handleNotification(){
-        if(title.contains("兴业银行")||content.contains("兴业银行")){
+        if(title.contains("精灵信使")&&content.contains("收入")){
             Map<String,String> postmap=new HashMap<String,String>();
 //            postmap.put("type","unionpay");
             postmap.put("time",when + "");
