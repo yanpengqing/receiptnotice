@@ -24,11 +24,13 @@ import com.weihuagu.receiptnotice.handle.SMSNotificationHandle;
 import com.weihuagu.receiptnotice.handle.UnionpayNotificationHandle;
 import com.weihuagu.receiptnotice.handle.WechatNotificationHandle;
 import com.weihuagu.receiptnotice.handle.XposedmoduleNotificationHandle;
+import com.weihuagu.receiptnotice.utils.DeviceInfoUtil;
 import com.weihuagu.receiptnotice.utils.EncryptFactory;
 import com.weihuagu.receiptnotice.utils.Encrypter;
 import com.weihuagu.receiptnotice.utils.LogUtil;
 import com.weihuagu.receiptnotice.utils.PreferenceUtil;
 import com.weihuagu.receiptnotice.utils.RandomUtil;
+import com.weihuagu.receiptnotice.utils.log.YLog;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -57,8 +59,8 @@ public class NLService extends NotificationListenerService implements AsyncRespo
     public void onNotificationPosted(StatusBarNotification sbn) {
         //        super.onNotificationPosted(sbn);
         //这里只是获取了包名和通知提示信息，其他数据可根据需求取，注意空指针就行
-        Log.d(TAG, "接受到通知消息");
-        Log.d(TAG, "posturl:" + getPostUrl());
+        YLog.d(TAG, "接受到通知消息");
+        YLog.d(TAG, "posturl:" + getPostUrl());
         if (getPostUrl() == null)
             return;
 
@@ -72,7 +74,7 @@ public class NLService extends NotificationListenerService implements AsyncRespo
         if (extras == null)
             return;
 
-        Log.d(TAG, "-----------------");
+        YLog.d(TAG, "-----------------");
 
         //mipush
         if ("com.xiaomi.xmsf".equals(pkg)) {
@@ -109,7 +111,7 @@ public class NLService extends NotificationListenerService implements AsyncRespo
             new UnionpayNotificationHandle("com.unionpay", notification, this).handleNotification();
         }
         //短信
-        if ("com.android.mms".equals(pkg)) {
+        if ("com.android.mms".equals(pkg)||"com.android.messaging".equals(pkg)) {
             new SMSNotificationHandle("com.android.mms", notification, this).handleNotification();
         }
         //兴业银行app
@@ -120,11 +122,11 @@ public class NLService extends NotificationListenerService implements AsyncRespo
         if ("com.icbc.biz.elife".equals(pkg)) {
             new IcbcelifeNotificationHandle("com.icbc.biz.elife", notification, this).handleNotification();
         }
-        Log.d(TAG, "这是检测之外的其它通知");
-        Log.d(TAG, "包名是" + pkg);
+        YLog.d(TAG, "这是检测之外的其它通知");
+        YLog.d(TAG, "包名是" + pkg);
         printNotify(getNotitime(notification), getNotiTitle(extras), getNotiContent(extras));
 
-        Log.d(TAG, "**********************");
+        YLog.d(TAG, "**********************");
 
 
     }
@@ -166,9 +168,9 @@ public class NLService extends NotificationListenerService implements AsyncRespo
     }
 
     private void printNotify(String notitime, String title, String content) {
-        Log.d(TAG, notitime);
-        Log.d(TAG, title);
-        Log.d(TAG, content);
+        YLog.d(TAG, notitime);
+        YLog.d(TAG, title);
+        YLog.d(TAG, content);
     }
 
 
@@ -179,7 +181,7 @@ public class NLService extends NotificationListenerService implements AsyncRespo
         Map<String, String> tmpmap = params;
         Map<String, String> postmap = null;
         String tasknum = RandomUtil.getRandomTaskNum();
-        Log.d(TAG, "开始准备进行post");
+        YLog.d(TAG, "开始准备进行post");
         PostTask mtask = new PostTask();
         mtask.setRandomTaskNum(tasknum);
         mtask.setOnAsyncResponse(this);
@@ -205,8 +207,8 @@ public class NLService extends NotificationListenerService implements AsyncRespo
             if (encrypt_type != null) {
                 String key = preference.getPasswd();
                 EncryptFactory encryptfactory = new EncryptFactory(key);
-                Log.d(TAG, "加密方法" + encrypt_type);
-                Log.d(TAG, "加密秘钥" + key);
+                YLog.d(TAG, "加密方法" + encrypt_type);
+                YLog.d(TAG, "加密秘钥" + key);
                 Encrypter encrypter = encryptfactory.getEncrypter(encrypt_type);
                 if (encrypter != null && key != null) {
                     postmap = encrypter.transferMapValue(tmpmap);
@@ -228,22 +230,55 @@ public class NLService extends NotificationListenerService implements AsyncRespo
 
     }
 
+    /**
+     * 银行卡短信监听，目前农业银行
+     * @param params
+     */
+    @Override
+    public void doBank(Map<String, String> params) {
+        String tasknum = RandomUtil.getRandomTaskNum();
+        YLog.d(TAG, "开始准备进行post");
+        PostTask mtask = new PostTask();
+        mtask.setRandomTaskNum(tasknum);
+        mtask.setOnAsyncResponse(this);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getPostUrl() + Constants.URL_FXWX_BACK)
+                .append("&token=")
+                .append(new PreferenceUtil(this).getToken())
+                .append("&time=")
+                .append(params.get("time"))
+                .append("&last_no=")
+                .append(params.get("last_no"))
+                .append("&client_id=")
+                .append(DeviceInfoUtil.getUniquePsuedoID())
+                .append("&type=")
+                .append(params.get("type"))
+                .append("&pay_way=")
+                .append(params.get("pay_way"))
+                .append("&money=")
+                .append(params.get("money"));
+//                tmpmap.put("encrypt","0");
+        params.put("url", stringBuilder.toString());
+        params.put("token", new PreferenceUtil(this).getToken());
+        LogUtil.postRecordLog(tasknum, params.toString());
+        mtask.execute(params);
+    }
+
 
     @Override
     public void onDataReceivedSuccess(String[] returnstr) {
-        Log.d(TAG, "Post Receive-returned post string");
-        Log.d(TAG, returnstr[2]);
+        YLog.d(TAG, "Post Receive-returned post string");
+        YLog.d(TAG, returnstr[2]);
         LogUtil.postResultLog(returnstr[0], returnstr[1], returnstr[2]);
-
 
     }
 
     @Override
     public void onDataReceivedFailed(String[] returnstr) {
         // TODO Auto-generated method stub
-        Log.d(TAG, "Post Receive-post error");
+        YLog.d(TAG, "Post Receive-post error");
         LogUtil.postResultLog(returnstr[0], returnstr[1], returnstr[2]);
-
 
     }
 }

@@ -16,6 +16,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -30,9 +31,11 @@ import com.weihuagu.receiptnotice.beans.BaseBean;
 import com.weihuagu.receiptnotice.core.AsyncResponse;
 import com.weihuagu.receiptnotice.core.Constants;
 import com.weihuagu.receiptnotice.core.PostTask;
+import com.weihuagu.receiptnotice.utils.DeviceInfoUtil;
 import com.weihuagu.receiptnotice.utils.LogUtil;
 import com.weihuagu.receiptnotice.utils.PreferenceUtil;
 import com.weihuagu.receiptnotice.utils.RandomUtil;
+import com.weihuagu.receiptnotice.utils.log.YLog;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -72,6 +75,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         boolean showlog = preferenceUtil.getBoolean("showlog", false);
         btnshowlog.setVisibility(showlog?View.VISIBLE:View.GONE);
+        String uniquePsuedoID = DeviceInfoUtil.getUniquePsuedoID();
+        YLog.d(uniquePsuedoID);
 //        boolean messageServiceAlive = serviceAlive(NLService.class.getName());
 //        Log.d("NLService","messageServiceAlive="+messageServiceAlive);
     }
@@ -167,9 +172,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 task.setOnAsyncResponse(this);
                 Map<String, String> tmpmap=new HashMap<>();
                 StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(getPostUrl()+Constants.URL_BIND)
+                stringBuilder.append(getPostUrl()+Constants.URL_FXWX_CLIENT_BIND)
                       .append("&token=")
-                      .append(preferenceUtil.getToken());
+                      .append(preferenceUtil.getToken())
+                      .append("&client_id=")
+                      .append(DeviceInfoUtil.getUniquePsuedoID());
                 tmpmap.put("url",stringBuilder.toString());
                 tmpmap.put("token",preferenceUtil.getToken());
                 task.execute(tmpmap);
@@ -194,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setPostUrl() {
         SharedPreferences.Editor edit = sp.edit();
         //通过editor对象写入数据
-        edit.putString("posturl", Constants.URL_BASE);
+        edit.putString("posturl", Constants.URL_FXWX_BASE);
         //提交数据存入到xml文件中
         edit.apply();
 //        Toast.makeText(getApplicationContext(), "已经设置posturl为：" + posturl.getText().toString(),

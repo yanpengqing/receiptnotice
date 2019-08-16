@@ -61,7 +61,7 @@ public class NotificationCollectorMonitorService extends Service implements Asyn
     public void onCreate() {
         super.onCreate();
         ensureCollectorRunning();
-        startEchoTimer();
+//        startEchoTimer();
     }
 
     @Override
@@ -218,15 +218,15 @@ public class NotificationCollectorMonitorService extends Service implements Asyn
             }
         }
         if (collectorRunning) {
-            Log.d(TAG, "ensureCollectorRunning: collector is running");
+            LogUtil.infoLog("ensureCollectorRunning: collector is running");
             return;
         }
-        Log.d(TAG, "ensureCollectorRunning: collector not running, reviving...");
+        LogUtil.infoLog("ensureCollectorRunning: collector not running, reviving...");
         toggleNotificationListenerService();
     }
 
     private void toggleNotificationListenerService() {
-        Log.d(TAG, "toggleNotificationListenerService() called");
+        LogUtil.infoLog("toggleNotificationListenerService() called");
         ComponentName thisComponent = new ComponentName(this, /*getClass()*/ NLService.class);
         PackageManager pm = getPackageManager();
         pm.setComponentEnabledSetting(thisComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);

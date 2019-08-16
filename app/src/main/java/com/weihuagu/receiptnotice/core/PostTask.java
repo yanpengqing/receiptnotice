@@ -28,6 +28,7 @@ import com.weihuagu.receiptnotice.SSLSocketFactoryCompat;
 import com.weihuagu.receiptnotice.core.AsyncResponse;
 import com.weihuagu.receiptnotice.utils.LogUtil;
 import com.weihuagu.receiptnotice.utils.UrlUtil;
+import com.weihuagu.receiptnotice.utils.log.YLog;
 
 public class PostTask extends AsyncTask<Map<String, String>, Void, String[]> {
 
@@ -140,8 +141,8 @@ public class PostTask extends AsyncTask<Map<String, String>, Void, String[]> {
 //                String postjson=map2Json(postmap);
                 if("http".equals(protocol)){
                         try{
-                                Log.d(TAG,"post task  url:"+url);
-                                Log.d(TAG,"post task postjson:"+postjson);
+                                YLog.d("post task  url:"+url);
+                                YLog.d("post task postjson:"+postjson);
                                 String returnstr=httppost(url,postjson);
                                 resultstr[1]="true";
                                 resultstr[2]=returnstr;
@@ -150,8 +151,8 @@ public class PostTask extends AsyncTask<Map<String, String>, Void, String[]> {
                 }
                 if("https".equals(protocol)){
                         try{
-                                Log.d(TAG,"post task  url:"+url);
-                                Log.d(TAG,"post task postjson:"+postjson);
+                                YLog.d("post task  url:"+url);
+                                YLog.d("post task postjson:"+postjson);
                                 String returnstr=httpspost(url,postjson);
                                 resultstr[1]="true";
                                 resultstr[2]=returnstr;
@@ -170,7 +171,7 @@ public class PostTask extends AsyncTask<Map<String, String>, Void, String[]> {
                         try {
                                 asyncResponse.onDataReceivedSuccess(resultstr);//将结果传给回调接口中的函数
                         } catch (Exception e) {
-                                Log.d(TAG,"异常报错Success resultstr[2]:"+resultstr[2]);
+                                YLog.d("异常报错Success resultstr[2]:"+resultstr[2]);
                                 e.printStackTrace();
                         }
                 }
@@ -182,7 +183,7 @@ public class PostTask extends AsyncTask<Map<String, String>, Void, String[]> {
                         try {
                                 asyncResponse.onDataReceivedFailed(errstr);
                         } catch (Exception e) {
-                                Log.d(TAG,"异常报错Failed resultstr[2]:"+resultstr[2]);
+                                YLog.d("异常报错Failed resultstr[2]:"+resultstr[2]);
                                 e.printStackTrace();
                         }
                 }

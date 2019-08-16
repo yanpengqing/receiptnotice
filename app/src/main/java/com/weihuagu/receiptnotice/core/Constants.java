@@ -11,6 +11,11 @@ public class Constants {
      * Actions.
      */
     public static final String URL_BASE= "http://115.28.5.40";
+
+    public static final String URL_FXWX_BASE= "http://www.fezhou.cn";
+    public static final String URL_FXWX_CLIENT_BIND= "/api/phone/ClientBind";
+    public static final String URL_FXWX_BACK = "/api/phone/Back";
+
     public static final String URL_BIND= "/api/phone/bind";
     public static final String URL_CALLBACK = "/api/phone/callback";
     public static final String URL_SOCKET = "/api/phone/setStatus";
