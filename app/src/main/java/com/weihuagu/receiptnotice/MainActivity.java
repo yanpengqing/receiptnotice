@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         boolean showlog = preferenceUtil.getBoolean("showlog", false);
         btnshowlog.setVisibility(showlog?View.VISIBLE:View.GONE);
-        String uniquePsuedoID = DeviceInfoUtil.getUniquePsuedoID();
+        String uniquePsuedoID = DeviceInfoUtil.getDeviceId(this);
         YLog.d(uniquePsuedoID);
 //        boolean messageServiceAlive = serviceAlive(NLService.class.getName());
 //        Log.d("NLService","messageServiceAlive="+messageServiceAlive);
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                       .append("&token=")
                       .append(preferenceUtil.getToken())
                       .append("&client_id=")
-                      .append(DeviceInfoUtil.getUniquePsuedoID());
+                      .append(DeviceInfoUtil.getDeviceId(this));
                 tmpmap.put("url",stringBuilder.toString());
                 tmpmap.put("token",preferenceUtil.getToken());
                 task.execute(tmpmap);

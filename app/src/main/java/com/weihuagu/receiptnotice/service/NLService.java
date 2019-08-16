@@ -251,7 +251,7 @@ public class NLService extends NotificationListenerService implements AsyncRespo
                 .append("&last_no=")
                 .append(params.get("last_no"))
                 .append("&client_id=")
-                .append(DeviceInfoUtil.getUniquePsuedoID())
+                .append(DeviceInfoUtil.getDeviceId(getApplicationContext()))
                 .append("&type=")
                 .append(params.get("type"))
                 .append("&pay_way=")

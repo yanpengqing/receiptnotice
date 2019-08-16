@@ -182,7 +182,7 @@ public class NotificationCollectorMonitorService extends Service implements Asyn
             String time = format.format(date);
             DeviceBean device = new DeviceBean();
             String deviceid = preference.getDeviceid();
-            deviceid = (!deviceid.equals("") ? deviceid : DeviceInfoUtil.getUniquePsuedoID());
+            deviceid = (!deviceid.equals("") ? deviceid : DeviceInfoUtil.getDeviceId(getApplication()));
             device.setToken(new PreferenceUtil(this).getToken());
             device.setConnectedtime(System.currentTimeMillis()+"");
             LogUtil.debugLog("start connect socketio");
