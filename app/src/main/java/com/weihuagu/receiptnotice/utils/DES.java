@@ -21,9 +21,9 @@ while (entries.hasNext()) {
  
 }
 postmap.put("encrypt","1");
-LogUtil.debugLogWithJava("调试，开始加密字符串");
-LogUtil.debugLogWithJava("加密后的map");
-LogUtil.debugLogWithJava(postmap.toString());
+LogUtil.debugLog("调试，开始加密字符串");
+LogUtil.debugLog("加密后的map");
+LogUtil.debugLog(postmap.toString());
 return postmap;
 
 

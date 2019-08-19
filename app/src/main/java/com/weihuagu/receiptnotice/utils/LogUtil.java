@@ -34,10 +34,6 @@ public class LogUtil {
         }
     }
 
-    public static void debugLogWithJava(String info) {
-        System.out.println(DEBUGTAG + ":" + info);
-    }
-
     public static void postRecordLog(String tasknum, String post) {
         if (BuildConfig.DEBUG) {
             Logger.i("*********************************");

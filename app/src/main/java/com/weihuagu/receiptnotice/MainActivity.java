@@ -9,14 +9,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -31,19 +29,15 @@ import com.weihuagu.receiptnotice.beans.BaseBean;
 import com.weihuagu.receiptnotice.core.AsyncResponse;
 import com.weihuagu.receiptnotice.core.Constants;
 import com.weihuagu.receiptnotice.core.PostTask;
-import com.weihuagu.receiptnotice.utils.DeviceInfoUtil;
 import com.weihuagu.receiptnotice.utils.LogUtil;
 import com.weihuagu.receiptnotice.utils.PreferenceUtil;
 import com.weihuagu.receiptnotice.utils.RandomUtil;
-import com.weihuagu.receiptnotice.utils.log.YLog;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.weihuagu.receiptnotice.core.Constants.URL_BASE;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, AsyncResponse {
 
@@ -75,10 +69,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         boolean showlog = preferenceUtil.getBoolean("showlog", false);
         btnshowlog.setVisibility(showlog?View.VISIBLE:View.GONE);
-        String uniquePsuedoID = DeviceInfoUtil.getDeviceId(this);
-        YLog.d(uniquePsuedoID);
+//        String uniquePsuedoID = DeviceInfoUtil.getDeviceId(this);
+//        YLog.d(uniquePsuedoID);
 //        boolean messageServiceAlive = serviceAlive(NLService.class.getName());
 //        Log.d("NLService","messageServiceAlive="+messageServiceAlive);
+//        SoulPermission.getInstance().checkAndRequestPermission(Manifest.permission.READ_PHONE_STATE,
+//                //if you want do noting or no need all the callbacks you may use SimplePermissionAdapter instead
+//                new CheckRequestPermissionListener() {
+//                    @Override
+//                    public void onPermissionOk(Permission permission) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onPermissionDenied(Permission permission) {
+//                        SoulPermission.getInstance().goApplicationSettings(new GoAppDetailCallBack() {
+//                            @Override
+//                            public void onBackFromAppDetail(Intent data) {
+//
+//                            }
+//                        });
+//                    }
+//                });
     }
 
     private void initView() {
@@ -174,9 +186,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append(getPostUrl()+Constants.URL_FXWX_CLIENT_BIND)
                       .append("&token=")
-                      .append(preferenceUtil.getToken())
-                      .append("&client_id=")
-                      .append(DeviceInfoUtil.getDeviceId(this));
+                      .append(preferenceUtil.getToken());
+//                      .append("&client_id=")
+//                      .append(DeviceInfoUtil.getDeviceId(this));
                 tmpmap.put("url",stringBuilder.toString());
                 tmpmap.put("token",preferenceUtil.getToken());
                 task.execute(tmpmap);

@@ -18,7 +18,7 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mContenx = this;
-        YLog.init(new XLogConfig().setShowThreadInfo(false).setDebug(BuildConfig.DEBUG).setTag("NLService"));
+        YLog.init(new XLogConfig().setShowThreadInfo(false).setDebug(BuildConfig.DEBUG));
         startNotificationService();
         initLogConfig();
     }

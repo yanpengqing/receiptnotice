@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.weihuagu.receiptnotice.core.AsyncResponse;
 import com.weihuagu.receiptnotice.core.Constants;
@@ -24,7 +23,6 @@ import com.weihuagu.receiptnotice.handle.SMSNotificationHandle;
 import com.weihuagu.receiptnotice.handle.UnionpayNotificationHandle;
 import com.weihuagu.receiptnotice.handle.WechatNotificationHandle;
 import com.weihuagu.receiptnotice.handle.XposedmoduleNotificationHandle;
-import com.weihuagu.receiptnotice.utils.DeviceInfoUtil;
 import com.weihuagu.receiptnotice.utils.EncryptFactory;
 import com.weihuagu.receiptnotice.utils.Encrypter;
 import com.weihuagu.receiptnotice.utils.LogUtil;
@@ -59,8 +57,8 @@ public class NLService extends NotificationListenerService implements AsyncRespo
     public void onNotificationPosted(StatusBarNotification sbn) {
         //        super.onNotificationPosted(sbn);
         //这里只是获取了包名和通知提示信息，其他数据可根据需求取，注意空指针就行
-        YLog.d(TAG, "接受到通知消息");
-        YLog.d(TAG, "posturl:" + getPostUrl());
+        YLog.d("接受到通知消息");
+        YLog.d( "posturl:" + getPostUrl());
         if (getPostUrl() == null)
             return;
 
@@ -74,7 +72,7 @@ public class NLService extends NotificationListenerService implements AsyncRespo
         if (extras == null)
             return;
 
-        YLog.d(TAG, "-----------------");
+        YLog.d("-----------------");
 
         //mipush
         if ("com.xiaomi.xmsf".equals(pkg)) {
@@ -122,11 +120,11 @@ public class NLService extends NotificationListenerService implements AsyncRespo
         if ("com.icbc.biz.elife".equals(pkg)) {
             new IcbcelifeNotificationHandle("com.icbc.biz.elife", notification, this).handleNotification();
         }
-        YLog.d(TAG, "这是检测之外的其它通知");
-        YLog.d(TAG, "包名是" + pkg);
+        YLog.d("这是检测之外的其它通知");
+        YLog.d("包名是" + pkg);
         printNotify(getNotitime(notification), getNotiTitle(extras), getNotiContent(extras));
 
-        YLog.d(TAG, "**********************");
+        YLog.d("**********************");
 
 
     }
@@ -168,9 +166,9 @@ public class NLService extends NotificationListenerService implements AsyncRespo
     }
 
     private void printNotify(String notitime, String title, String content) {
-        YLog.d(TAG, notitime);
-        YLog.d(TAG, title);
-        YLog.d(TAG, content);
+        YLog.d(notitime);
+        YLog.d(title);
+        YLog.d(content);
     }
 
 
@@ -181,7 +179,7 @@ public class NLService extends NotificationListenerService implements AsyncRespo
         Map<String, String> tmpmap = params;
         Map<String, String> postmap = null;
         String tasknum = RandomUtil.getRandomTaskNum();
-        YLog.d(TAG, "开始准备进行post");
+        YLog.d("开始准备进行post");
         PostTask mtask = new PostTask();
         mtask.setRandomTaskNum(tasknum);
         mtask.setOnAsyncResponse(this);
@@ -207,8 +205,8 @@ public class NLService extends NotificationListenerService implements AsyncRespo
             if (encrypt_type != null) {
                 String key = preference.getPasswd();
                 EncryptFactory encryptfactory = new EncryptFactory(key);
-                YLog.d(TAG, "加密方法" + encrypt_type);
-                YLog.d(TAG, "加密秘钥" + key);
+                YLog.d("加密方法" + encrypt_type);
+                YLog.d("加密秘钥" + key);
                 Encrypter encrypter = encryptfactory.getEncrypter(encrypt_type);
                 if (encrypter != null && key != null) {
                     postmap = encrypter.transferMapValue(tmpmap);
@@ -237,7 +235,7 @@ public class NLService extends NotificationListenerService implements AsyncRespo
     @Override
     public void doBank(Map<String, String> params) {
         String tasknum = RandomUtil.getRandomTaskNum();
-        YLog.d(TAG, "开始准备进行post");
+        YLog.d("开始准备进行post");
         PostTask mtask = new PostTask();
         mtask.setRandomTaskNum(tasknum);
         mtask.setOnAsyncResponse(this);
@@ -250,8 +248,8 @@ public class NLService extends NotificationListenerService implements AsyncRespo
                 .append(params.get("time"))
                 .append("&last_no=")
                 .append(params.get("last_no"))
-                .append("&client_id=")
-                .append(DeviceInfoUtil.getDeviceId(getApplicationContext()))
+//                .append("&client_id=")
+//                .append(DeviceInfoUtil.getDeviceId(getApplicationContext()))
                 .append("&type=")
                 .append(params.get("type"))
                 .append("&pay_way=")
@@ -268,8 +266,8 @@ public class NLService extends NotificationListenerService implements AsyncRespo
 
     @Override
     public void onDataReceivedSuccess(String[] returnstr) {
-        YLog.d(TAG, "Post Receive-returned post string");
-        YLog.d(TAG, returnstr[2]);
+        YLog.d("Post Receive-returned post string");
+        YLog.d( returnstr[2]);
         LogUtil.postResultLog(returnstr[0], returnstr[1], returnstr[2]);
 
     }
@@ -277,7 +275,7 @@ public class NLService extends NotificationListenerService implements AsyncRespo
     @Override
     public void onDataReceivedFailed(String[] returnstr) {
         // TODO Auto-generated method stub
-        YLog.d(TAG, "Post Receive-post error");
+        YLog.d("Post Receive-post error");
         LogUtil.postResultLog(returnstr[0], returnstr[1], returnstr[2]);
 
     }
