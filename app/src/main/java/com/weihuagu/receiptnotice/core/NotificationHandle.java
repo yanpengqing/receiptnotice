@@ -49,7 +49,7 @@ public abstract class NotificationHandle {
     public abstract void handleNotification();
 
     protected String extractMoney(String content) {
-        Pattern pattern = Pattern.compile("(收款|向你付款|收入)(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?元");
+        Pattern pattern = Pattern.compile("(收款|向你付款|收入|收入人民币)(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?元");
         Matcher matcher = pattern.matcher(content);
         if (matcher.find()) {
             String tmp = matcher.group();

@@ -38,6 +38,8 @@ public class NLService extends NotificationListenerService implements AsyncRespo
     private String TAG = "NLService";
     private String posturl = null;
     private Context context = null;
+    private static final int MIN_CLICK_DELAY_TIME = 1000;
+    private static long lastClickTime;
 
     private String getPostUrl() {
         SharedPreferences sp = getSharedPreferences("url", 0);
@@ -57,8 +59,11 @@ public class NLService extends NotificationListenerService implements AsyncRespo
     public void onNotificationPosted(StatusBarNotification sbn) {
         //        super.onNotificationPosted(sbn);
         //这里只是获取了包名和通知提示信息，其他数据可根据需求取，注意空指针就行
+//        if (!isFastClick()){
+//            return;
+//        }
         YLog.d("接受到通知消息");
-        YLog.d( "posturl:" + getPostUrl());
+        YLog.d("posturl:" + getPostUrl());
         if (getPostUrl() == null)
             return;
 
@@ -109,8 +114,10 @@ public class NLService extends NotificationListenerService implements AsyncRespo
             new UnionpayNotificationHandle("com.unionpay", notification, this).handleNotification();
         }
         //短信
-        if ("com.android.mms".equals(pkg)||"com.android.messaging".equals(pkg)) {
+        if ("com.android.mms".equals(pkg) || "com.android.messaging".equals(pkg)) {
             new SMSNotificationHandle("com.android.mms", notification, this).handleNotification();
+            removeNotification(sbn);
+
         }
         //兴业银行app
         if ("com.cib.cibmb".equals(pkg)) {
@@ -126,6 +133,15 @@ public class NLService extends NotificationListenerService implements AsyncRespo
 
         YLog.d("**********************");
 
+
+    }
+
+    public void removeNotification(StatusBarNotification sbn) {
+        if (Build.VERSION.SDK_INT >= 21)
+            cancelNotification(sbn.getKey());
+        else
+            cancelNotification(sbn.getPackageName(), sbn.getTag(), sbn.getId());
+        YLog.d("receiptnotice移除了包名为" + sbn.getPackageName() + "的通知");
 
     }
 
@@ -230,6 +246,7 @@ public class NLService extends NotificationListenerService implements AsyncRespo
 
     /**
      * 银行卡短信监听，目前农业银行
+     *
      * @param params
      */
     @Override
@@ -246,12 +263,12 @@ public class NLService extends NotificationListenerService implements AsyncRespo
                 .append(new PreferenceUtil(this).getToken())
                 .append("&time=")
                 .append(params.get("time"))
-                .append("&last_no=")
-                .append(params.get("last_no"))
+//                .append("&last_no=")
+//                .append(params.get("last_no"))
 //                .append("&client_id=")
 //                .append(DeviceInfoUtil.getDeviceId(getApplicationContext()))
-                .append("&type=")
-                .append(params.get("type"))
+//                .append("&type=")
+//                .append(params.get("type"))
                 .append("&pay_way=")
                 .append(params.get("pay_way"))
                 .append("&money=")
@@ -267,7 +284,7 @@ public class NLService extends NotificationListenerService implements AsyncRespo
     @Override
     public void onDataReceivedSuccess(String[] returnstr) {
         YLog.d("Post Receive-returned post string");
-        YLog.d( returnstr[2]);
+        YLog.d(returnstr[2]);
         LogUtil.postResultLog(returnstr[0], returnstr[1], returnstr[2]);
 
     }
@@ -278,5 +295,15 @@ public class NLService extends NotificationListenerService implements AsyncRespo
         YLog.d("Post Receive-post error");
         LogUtil.postResultLog(returnstr[0], returnstr[1], returnstr[2]);
 
+    }
+
+    public static boolean isFastClick() {
+        boolean flag = false;
+        long curClickTime = System.currentTimeMillis();
+        if ((curClickTime - lastClickTime) >= MIN_CLICK_DELAY_TIME) {
+            flag = true;
+        }
+        lastClickTime = curClickTime;
+        return flag;
     }
 }

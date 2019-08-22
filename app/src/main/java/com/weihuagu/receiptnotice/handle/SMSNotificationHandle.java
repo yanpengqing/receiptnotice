@@ -29,9 +29,10 @@ public class SMSNotificationHandle extends NotificationHandle {
             return;
         }
         if (title.contains("农业银行") || title.contains("95599") && (content.contains("中国农业银行") && content.contains("尾号")
-                && content.contains("交易人民币")&& content.contains("余额"))) {
+                && content.contains("交易人民币") && content.contains("余额"))) {
             try {
-                String value = extractMoney(content);
+                String value = getMidText(content, "交易人民币", "，");
+//                String value = extractMoney(content);
                 if (TextUtils.isEmpty(value)) {
                     return;
                 }
@@ -43,6 +44,30 @@ public class SMSNotificationHandle extends NotificationHandle {
                 if (content.contains("支付宝")) {
                     postmap.put("pay_way", "2");
                 } else if (content.contains("银联")) {
+                    postmap.put("pay_way", "1");
+                }
+                postpush.doBank(postmap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+        if (title.contains("华夏银行") || title.contains("95577") && (content.contains("华夏银行") && content.contains("您的账户")
+                && content.contains("收入人民币") && content.contains("余额"))) {
+            try {
+//                String value = super.extractMoney(content);
+                String value = getMidText(content, "收入人民币", "元");
+                if (TextUtils.isEmpty(value)) {
+                    return;
+                }
+                Map<String, String> postmap = new HashMap<String, String>();
+//            postmap.put("type","unionpay");
+                postmap.put("time", when + "");
+//                postmap.put("last_no", getMidText(content, "账户", "于"));  //尾号
+                postmap.put("money", value);
+                if (content.contains("支付宝余额")) {
+                    postmap.put("pay_way", "2");
+                } else if (content.contains("支付宝绑卡")) {
                     postmap.put("pay_way", "1");
                 }
                 postpush.doBank(postmap);
