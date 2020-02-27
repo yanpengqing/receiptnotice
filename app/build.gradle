@@ -19,7 +19,7 @@ android {
         release {
             keyAlias 'bjn'
             keyPassword 'bjn123456'
-            storeFile file('D:/AndroidStudioProjects/receiptNotic/AppKeys.jks')
+            storeFile file(new File("../app/AppKeys.jks"))
             storePassword 'bjn123456'
         }
     }
